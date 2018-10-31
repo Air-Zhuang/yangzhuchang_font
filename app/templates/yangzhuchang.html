@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>养猪场</title>
+
+    <style type="text/css">
+        img{
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cate"></div><br>
+<div class="title"></div>
+<div class="pic"></div>
+
+<script src="../static/js/jquery-2.1.1.js"></script>
+<script src="../static/js/common.js"></script>
+<script src="../static/js/layer/layer.js"></script>
+<script src="../static/js/base64.min.js"></script>
+<script src="../static/js/jquery.cookie.js"></script>
+<script>
+    var cate=$(".cate");
+    var cate_list=[];
+    $.ajax({
+        url: "http://47.101.59.238:8666/v1/cate",
+        type: "GET",
+        dataType: 'json',
+        success: function (result) {
+            cate_list=result['value'];
+            // console.log(cate);
+            for(var i=0;i<cate_list.length;i++){
+                each_class=cate_list[i];
+                var cate_a = $('<a href="#" onclick="get_title(this)" class='+each_class+'></a>').text(each_class+" ");
+                cate.append(cate_a)
+            }
+        }
+    });
+    var ori_url="";
+    var local_url="";
+    $.ajax({
+        url: "http://47.101.59.238:8666/v1/domain",
+        type: "GET",
+        dataType: 'json',
+        success: function (result) {
+            var domain=result['value'];
+            local_url=domain["local_url"];
+            ori_url=domain["ori_url"];
+        }
+    });
+
+    function reset_title() {
+        $(".title").remove();
+        var title = $('<div class="title"></div>');
+        $("body").append(title);
+    }
+    function reset_pic() {
+        $(".pic").remove();
+        var pic = $('<div class="pic"></div>');
+        $("body").append(pic);
+    }
+    function get_title(cate) {
+        reset_title();
+        reset_pic();
+        var title=$(".title");
+        var title_list=[];
+        $.ajax({
+            url: "http://47.101.59.238:8666/v1/cate/list?kind="+cate.className,
+            type: "GET",
+            dataType: 'json',
+            success: function (result) {
+                title_list=result['value'];
+                // console.log(result);
+                for(var i=0;i<title_list.length;i++){
+                    each_class=cate.className;
+                    var title_a = $('<a href="#" onclick="get_pic(this)" class='+each_class+'></a>').text(title_list[i]);
+                    var br=$('<br>');
+                    title.append(title_a);
+                    title.append(br)
+                }
+            }
+        });
+    }
+    function get_pic(title) {
+        reset_title();
+        reset_pic();
+        var pic=$(".pic");
+        var pic_list=[];
+        $.ajax({
+            url: "http://47.101.59.238:8666/v1/pic/"+title.className+"?title="+title.text,
+            type: "GET",
+            dataType: 'json',
+            success: function (result) {
+                pic_list=result['value'];
+                // console.log(pic_list);
+                for(var i=0;i<pic_list.length;i++){
+                    each_url=ori_url+pic_list[i]["ori_url"];
+                    var pic_pic = $('<img src='+each_url+'>');
+                    var br=$('<br>');
+                    pic.append(pic_pic);
+                    title.append(br)
+                }
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>
