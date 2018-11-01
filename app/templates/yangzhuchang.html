@@ -96,7 +96,8 @@
             success: function (result) {
                 pic_list=result['value'];
                 // console.log(pic_list);
-                for(var i=0;i<pic_list.length;i++){
+                // for(var i=0;i<pic_list.length;i++){
+                for(var i=0;i<10;i++){
                     each_url=local_url+pic_list[i]["local_url"];
                     var pic_pic = $('<img src='+each_url+'>');
                     var br=$('<br>');
